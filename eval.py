@@ -2,7 +2,7 @@ from util import *
 from forecast import *
 
 # Read historical games from CSV
-games = Util.read_games("data/nfl_games.csv")
+games = Util.read_games("NP_data/nfl_games.csv")
 
 # Forecast every game
 Forecast.forecast(games)

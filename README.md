@@ -1,3 +1,15 @@
+# Forked Version Updates
+[*] Updated to work with new data published by [Neil Paine](https://github.com/Neil-Paine-1/NFL-elo-ratings)
+
+[*] Modified output of command line to only show the upcoming week predictions
+
+# LICENSE INFORMATION
+[*] NP_data folder contains the license for using the data in that folder.
+[*] Original License File is for the existing code from the FiveThirtyEight project repository, and will be the license used for all modifications until further notice, unless specified. 
+
+
+# ORIGINAL CONTENT FOLLOWS 
+
 # Can You Beat FiveThirtyEight's NFL Predictions?
 
 This repository contains code and data to accompany [FiveThirtyEight's NFL Forecasting game](https://projects.fivethirtyeight.com/2021-nfl-forecasting-game/). Specifically, it has:
