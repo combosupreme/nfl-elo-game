@@ -1,4 +1,5 @@
 import argparse
+import argparse
 from util import *
 from forecast import *
 from fractions import Fraction
@@ -29,6 +30,8 @@ def main():
         user_forecast_values = False
     
 
+    # Read historical games from CSV
+    games = Util.read_games(args.get_updates)
     # Read historical games from CSV
     games = Util.read_games(args.get_updates)
 
