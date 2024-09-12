@@ -79,7 +79,6 @@ class Util:
             
     @staticmethod
     def read_games(get_updates: bool) -> list:
-    def read_games(get_updates: bool) -> list:
         """ Initializes game objects from csv """
         current_season_year = datetime.now().year if datetime.now().month > 2 else datetime.now().year - 1
         file = f"NP_data/nfl_games_{current_season_year}.csv"
@@ -103,7 +102,6 @@ class Util:
         return games
 
     @staticmethod
-    def evaluate_forecasts(games: list, filter_to_home_team: bool = False) -> dict:
     def evaluate_forecasts(games: list, filter_to_home_team: bool = False) -> dict:
         """ Evaluates and scores forecasts in the my_prob1 field against those in the elo_prob1 field for each game """
         my_points_by_season, elo_points_by_season = {}, {}
