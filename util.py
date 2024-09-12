@@ -209,14 +209,12 @@ class Util:
                 server.sendmail(sender_email, receiver_email, msg.as_string())
                 print(f"Email sent to {receiver_email}")
         except Exception as e:
-            print(f"Failed to send email: {e}")
-
-        
+            print(f"Failed to send email: {e}")       
     
     @staticmethod
     def this_nfl_week_dates() -> list:
         """ Returns the dates of the current NFL week """
-        start_date = datetime.strptime(f"{CURRENT_SEASON_YEAR}-W{THIS_NFL_WEEK}-1", "%Y-W%W-%w")
+        start_date = datetime.strptime(f"{CURRENT_SEASON_YEAR}-W{THIS_NFL_WEEK}-1", "%Y-W%W-%w") + timedelta(days=1)
         return [(start_date + timedelta(n)).strftime('%Y-%m-%d') for n in range(7)]
             
         

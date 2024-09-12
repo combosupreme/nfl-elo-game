@@ -24,6 +24,8 @@ def main():
         except ValueError:
             args.revert_value = Fraction(args.revert_value)
     if args.k_value or args.hfa_value or args.revert_value:
+        user_forecast_values = True
+    else:
         user_forecast_values = False
     
 
