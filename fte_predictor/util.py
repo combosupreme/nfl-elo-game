@@ -90,6 +90,12 @@ class Util:
         return games
 
     @staticmethod
+    def this_nfl_week_dates() -> list:
+        """ Returns the dates of the current NFL week """
+        start_date = datetime.strptime(f"{CURRENT_SEASON_YEAR}-W{THIS_NFL_WEEK}-1", "%Y-W%W-%w") + timedelta(days=1)
+        return [(start_date + timedelta(n)).strftime('%Y-%m-%d') for n in range(7)]
+            
+    @staticmethod
     def evaluate_forecasts(games: list, filter_to_home_team: bool = False) -> dict:
         """ Evaluates and scores forecasts in the my_prob1 field against those in the elo_prob1 field for each game """
         my_points_by_season, elo_points_by_season = {}, {}
@@ -177,11 +183,4 @@ class Util:
         if not skip_print:
             print(result_str)
         return result_str
-    
-    @staticmethod
-    def this_nfl_week_dates() -> list:
-        """ Returns the dates of the current NFL week """
-        start_date = datetime.strptime(f"{CURRENT_SEASON_YEAR}-W{THIS_NFL_WEEK}-1", "%Y-W%W-%w") + timedelta(days=1)
-        return [(start_date + timedelta(n)).strftime('%Y-%m-%d') for n in range(7)]
-            
         

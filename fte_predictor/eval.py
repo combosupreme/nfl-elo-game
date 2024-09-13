@@ -1,9 +1,27 @@
 import argparse
-import argparse
-from util import *
-from forecast import *
+from .util import *
+from .forecast import *
 from fractions import Fraction
 
+
+def call_predictor(get_updates: bool, k_value: float, hfa_value: float, revert_value: float, condensed_version: bool, dont_show_this_weeks_games: bool) -> dict:
+    # Read historical games from CSV
+    games = Util.read_games(get_updates)
+
+    # Forecast every game
+    forecasted_games = Forecast.forecast(games, hfa_value, k_value,)
+
+    # Evaluate our forecasts against Elo
+    my_points_by_season, elo_points_by_season = Util.evaluate_forecasts(forecasted_games)
+            
+    return_dict = {
+        "forecasted_games": forecasted_games,
+        "my_points_by_season": my_points_by_season,
+        "elo_points_by_season": elo_points_by_season
+        }
+        
+    return return_dict
+    
 def main():
     parser = argparse.ArgumentParser(description='NFL Elo Ratings')
     parser.add_argument('-u', '--get_updates', help='Update the CSV File for the most recent games', action='store_true', required=False)
@@ -28,18 +46,13 @@ def main():
         user_forecast_values = True
     else:
         user_forecast_values = False
+    result_dict = call_predictor(args.get_updates, args.k_value, args.hfa_value, args.revert_value, args.condensed_version, args.dont_show_this_weeks_games)
     
-    # Read historical games from CSV
-    games = Util.read_games(args.get_updates)
-
-    # Forecast every game
-    forecasted_games = Forecast.forecast(games, args.hfa_value, args.k_value,)
-
-    # Evaluate our forecasts against Elo
-    my_points_by_season, elo_points_by_season = Util.evaluate_forecasts(forecasted_games)
+    # Print the results
+    forecasted_games = result_dict['forecasted_games']
     
     if not args.dont_show_this_weeks_games:
-        results_str = Util.show_this_weeks_games(games, user_forecast_values, args.condensed_version)
+        results_str = Util.show_this_weeks_games(forecasted_games, user_forecast_values, args.condensed_version)
 
 if __name__ == '__main__':
     main()

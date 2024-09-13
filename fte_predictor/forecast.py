@@ -9,12 +9,10 @@ K = 20.0       # The speed at which Elo ratings change
 REVERT = 1/3.0 # Between seasons, a team retains 2/3 of its previous season's rating
 
 # Reversions for teams that have changed cities or names
-# Reversions for teams that have changed cities or names
 REVERSIONS = {'CBD1925': 1502.032, 'RAC1926': 1403.384, 'LOU1926': 1307.201, 'CIB1927': 1362.919, 'MNN1929': 1306.702, # Some between-season reversions of unknown origin
               'BFF1929': 1331.943, 'LAR1944': 1373.977, 'PHI1944': 1497.988, 'ARI1945': 1353.939, 'PIT1945': 1353.939, 'CLE1999': 1300.0}
 
 class Forecast:
-
     @staticmethod
     def forecast(games: list, hfa_value: float=None, k_value: float = None, revert_value: float = None) -> list:
         """ Generates win probabilities in the my_prob1 field for each game based on Elo model """
@@ -22,7 +20,6 @@ class Forecast:
         hfa_value = hfa_value if hfa_value else HFA
         k_value = k_value if k_value else K
 
-        
         # Initialize team objects to maintain ratings
         teams = {}
         for row in [item for item in csv.DictReader(open("data/initial_elos.csv"))]:
@@ -34,7 +31,6 @@ class Forecast:
 
         for game in games:
             team1, team2 = teams[game['team1']], teams[game['team2']]
-
             # Revert teams at the start of seasons
             for team in [team1, team2]:
                 if team['season'] and game['season'] != team['season']:

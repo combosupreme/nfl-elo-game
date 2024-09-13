@@ -1,6 +1,6 @@
 import unittest
 from datetime import datetime, timedelta
-from util import Util
+from .util import Util
 
 class UtilTests(unittest.TestCase):
     def test_is_game_in_this_week(self):
