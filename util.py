@@ -7,18 +7,6 @@ DATE_FORMAT = '%Y-%m-%d'
 WEEKDAY_THRESHOLD = 0  # Monday
 CURRENT_SEASON_YEAR = datetime.now().year if datetime.now().month > 2 else datetime.now().year - 1
 THIS_NFL_WEEK = datetime.now().isocalendar()[1] if datetime.now().weekday() > WEEKDAY_THRESHOLD else datetime.now().isocalendar()[1] - 1
-SENDER_EMAIL_ADDRESS = None
-SMTP_SERVER_URL = None
-from datetime import datetime, timedelta
-from urllib.request import urlretrieve
-
-# Constants
-DATE_FORMAT = '%Y-%m-%d'
-WEEKDAY_THRESHOLD = 0  # Monday
-CURRENT_SEASON_YEAR = datetime.now().year if datetime.now().month > 2 else datetime.now().year - 1
-THIS_NFL_WEEK = datetime.now().isocalendar()[1] if datetime.now().weekday() > WEEKDAY_THRESHOLD else datetime.now().isocalendar()[1] - 1
-SENDER_EMAIL_ADDRESS = None
-SMTP_SERVER_URL = None
 
 class Util:
     @staticmethod
@@ -147,14 +135,7 @@ class Util:
         elo_avg = sum(elo_points_by_season.values())/len(elo_points_by_season.values())
         print("\nOn average, the adjusted forecasts had a Brier Score of %s points per season. Elo got %s points per season.\n" % (round(my_avg, 2), round(elo_avg, 2)))
         return my_points_by_season, elo_points_by_season
-        print("\nOn average, the adjusted forecasts had a Brier Score of %s points per season. Elo got %s points per season.\n" % (round(my_avg, 2), round(elo_avg, 2)))
-        return my_points_by_season, elo_points_by_season
 
-    @staticmethod
-    def show_this_weeks_games(games: list[dict], user_forecast_values: bool = False, condensed_version:bool = False, skip_print:bool = False) -> str:
-        """ Prints forecasts for upcoming games and returns the same as a string """
-        result_str = ""
-        upcoming_games = [g for g in games if g['result1'] is None and 'my_prob1' in g]
     @staticmethod
     def show_this_weeks_games(games: list[dict], user_forecast_values: bool = False, condensed_version:bool = False, skip_print:bool = False) -> str:
         """ Prints forecasts for upcoming games and returns the same as a string """
@@ -179,8 +160,7 @@ class Util:
                                 result_str += f"\t\t\t{'-'*len(matchup)}\n"
                                 
                             if condensed_version:
-                                current_year_str = f'- {CURRENT_SEASON_YEAR}'
-                                matchup_str = str(matchup).replace('vs.', '\t@').replace(current_year_str, f'\t{CURRENT_SEASON_YEAR}')
+                                matchup_str = f"{matchups[matchup][0]['team2']}\t@  {matchups[matchup][0]['team1']}\t{matchups[matchup][0]['date']}"
                                 home_team = matchups[matchup][0]['team1'] if matchups[matchup][0]['is_home'] == '1' else matchups[matchup][0]['team2']
                                 away_team = matchups[matchup][0]['team1'] if matchups[matchup][0]['is_home'] != '1' else matchups[matchup][0]['team2']
                                 home_elo_prob = int(round(100*matchups[matchup][0]['elo_prob1'])) if matchups[matchup][0]['is_home'] == '1' else int(round(100*matchups[matchup][1]['elo_prob1']))
@@ -197,73 +177,6 @@ class Util:
         if not skip_print:
             print(result_str)
         return result_str
-            
-    @staticmethod
-    def email_this_weeks_games(games: list[dict], email_address:str, filter_to_home_team: bool = False, user_forecast_values: bool = False):
-        if not SMTP_SERVER_URL:
-            print("SMTP_SERVER_URL is not set. Please set it to the URL of your SMTP server.")
-            return
-        
-        import smtplib
-        from email.mime.text import MIMEText
-        from email.mime.multipart import MIMEMultipart
-        
-        # Copy the show_this_weeks_games function and modify it to return a string instead of printing
-        def get_this_weeks_games(games: list[dict], filter_to_home_team: bool = False, user_forecast_values: bool = False) -> str:
-            upcoming_games = [g for g in games if g['result1'] == None and 'my_prob1' in g]
-            if len(upcoming_games) > 0:
-                if user_forecast_values:
-                    my_prob_label = "You"
-                else:
-                    my_prob_label = "FiveThirtyEight"
-                matchups = Util.group_predictions_by_matchup(games)
-                if len(matchups) > 0:
-                    games_str = f'Forcasting for games in week {int(THIS_NFL_WEEK) - 35} of the {CURRENT_SEASON_YEAR} NFL season...\n'
-                    games_str += f'Date\t\tTeam\t\tElo Prediction\t\t{"Your" if user_forecast_values else "FiveThirtyEight"} Prediction\n'
-                    if filter_to_home_team:
-                        games_str += 'Only showing forecasts for home teams\n'
-                    game_dates = Util.this_nfl_week_dates()
-                    for date in game_dates:
-                        for matchup in matchups.keys():
-                            if date in matchup:
-                                games_str += f"\n\t\t\t{matchup}\n"
-                                games_str += f"\t\t\t{'-'*len(matchup)}\n"
-                                for prediction in matchups[matchup]:
-                                    if filter_to_home_team and prediction['is_home'] != '1':
-                                        continue
-                                    games_str += f"{prediction['date']}\t{prediction['team1']}\t\t{int(round(100*prediction['elo_prob1']))}% (Elo)\t\t{int(round(100*prediction['my_prob1']))}% ({my_prob_label})\n"
-                    return games_str
-            else:
-                return "No upcoming games to forecast"
-        
-        games_str = get_this_weeks_games(games, filter_to_home_team, user_forecast_values)
-        
-        # Email the games
-        # Send from the SENDER_EMAIL_ADDRESS if it is set, otherwise send from the email_address the user entered
-        sender_email = SENDER_EMAIL_ADDRESS if SENDER_EMAIL_ADDRESS else email_address
-        receiver_email = email_address
-        
-        # Create the email content
-        subject = "This Week's NFL Games Forecast"
-        body = games_str
-
-        # Create the MIME structure
-        msg = MIMEMultipart()
-        msg['From'] = sender_email
-        msg['To'] = receiver_email
-        msg['Subject'] = subject
-
-        msg.attach(MIMEText(body, 'plain'))
-
-        # Send the email
-        try:
-            with smtplib.SMTP(SMTP_SERVER_URL, 587) as server:  # Replace 'smtp.example.com' with your SMTP server
-                server.starttls()
-                server.login(sender_email, 'your_password')  # Replace 'your_password' with the actual password
-                server.sendmail(sender_email, receiver_email, msg.as_string())
-                print(f"Email sent to {receiver_email}")
-        except Exception as e:
-            print(f"Failed to send email: {e}")       
     
     @staticmethod
     def this_nfl_week_dates() -> list:

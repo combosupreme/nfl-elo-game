@@ -11,7 +11,7 @@ def main():
     parser.add_argument('-hfa', '--hfa_value', help='Set the HFA value for the forecast', required=False)
     parser.add_argument('-r', '--revert_value', help='Set the revert value for the forecast in float or fraction type. Example is .33 or 1/3', required=False)
     parser.add_argument('-c', '--condensed_version', help='Show a condensed version of the predictions', action='store_true', required=False)
-    parser.add_argument('-ds', '--dont_show_this_weeks_games', help='Dont show the predictions, only the Brier Score', action='store_false', required=False)
+    parser.add_argument('-ds', '--dont_show_this_weeks_games', help='Dont show the predictions, only the Brier Score', action='store_true', required=False)
     args = parser.parse_args()
     
     # if the user wants to add values for k, hfa, and revert to the forecast, get them from args and pass them to the forecast function, then set user_forecast_values to True
@@ -29,20 +29,17 @@ def main():
     else:
         user_forecast_values = False
     
-
-    # Read historical games from CSV
-    games = Util.read_games(args.get_updates)
     # Read historical games from CSV
     games = Util.read_games(args.get_updates)
 
     # Forecast every game
-    Forecast.forecast(games, args.hfa_value, args.k_value,)
+    forecasted_games = Forecast.forecast(games, args.hfa_value, args.k_value,)
 
     # Evaluate our forecasts against Elo
-    Util.evaluate_forecasts(games)
+    my_points_by_season, elo_points_by_season = Util.evaluate_forecasts(forecasted_games)
     
-    if args.dont_show_this_weeks_games:
-        Util.show_this_weeks_games(games, user_forecast_values, args.condensed_version)
+    if not args.dont_show_this_weeks_games:
+        results_str = Util.show_this_weeks_games(games, user_forecast_values, args.condensed_version)
 
 if __name__ == '__main__':
     main()

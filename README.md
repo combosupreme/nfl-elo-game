@@ -1,14 +1,19 @@
 # Forked Version Updates
-[*] Updated to work with new data published by [Neil Paine](https://github.com/Neil-Paine-1/NFL-elo-ratings)
-
-[*] Modified output of command line to only show the upcoming week predictions
+[*] Updated to work with new data published by [Neil Paine](https://github.com/Neil-Paine-1/NFL-elo-ratings).
+[*NOTE*] Some of the calculations were modified at best effort, I am not a statistician, these values should be verified before use. 
+[*] Modified output of command line to only show the upcoming week predictions.
+[*] Added argument parsing for command line.
+[*] Added custom value support to modify k value, hfa (Home Field Advantage), and revert values.
+[*] Adjusted output to be more visually appealing, supporting full view and condensed modes. 
 
 # LICENSE INFORMATION
 [*] NP_data folder contains the license for using the data in that folder.
 [*] Original License File is for the existing code from the FiveThirtyEight project repository, and will be the license used for all modifications until further notice, unless specified. 
 
+# DISCLAIMER
+[*] This is for informational and educational purposes only. All modifications are a best effort attempt. I am not responsible for the result of how you use this project.
 
-# ORIGINAL CONTENT FOLLOWS 
+# ORIGINAL README CONTENT FOLLOWS -- This explains how the project was created and intended to be used.
 
 # Can You Beat FiveThirtyEight's NFL Predictions?
 

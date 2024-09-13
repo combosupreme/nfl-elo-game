@@ -1,10 +1,7 @@
 import csv
 import math
-from fractions import Fraction
-from fractions import Fraction
 
-# Constants
-# FiveThirtyEight's Elo model defauts
+
 # Constants
 # FiveThirtyEight's Elo model defauts
 HFA = 65.0     # Home field advantage is worth 65 Elo points
@@ -24,10 +21,7 @@ class Forecast:
         revert_value = float(revert_value) if revert_value else REVERT
         hfa_value = hfa_value if hfa_value else HFA
         k_value = k_value if k_value else K
-        
-        revert_value = float(revert_value) if revert_value else REVERT
-        hfa_value = hfa_value if hfa_value else HFA
-        k_value = k_value if k_value else K
+
         
         # Initialize team objects to maintain ratings
         teams = {}
@@ -51,10 +45,12 @@ class Forecast:
                         team['elo'] = 1505.0*revert_value + team['elo']*(1-revert_value)
                         team['elo'] = 1505.0*revert_value + team['elo']*(1-revert_value)
                 team['season'] = game['season']
-
+            
             # Elo difference includes home field advantage
-            elo_diff = team1['elo'] - team2['elo'] + (0 if game['neutral'] == 1 else hfa_value)
-            elo_diff = team1['elo'] - team2['elo'] + (0 if game['neutral'] == 1 else hfa_value)
+            if game['is_home'] == 1:
+                elo_diff = team1['elo'] - team2['elo'] + (0 if game['neutral'] == 1 else (hfa_value/2))
+            else:
+                elo_diff = team1['elo'] - team2['elo'] - (0 if game['neutral'] == 1 else (hfa_value/2))
 
             # This is the most important piece, where we set my_prob1 to our forecasted probability
             if game['elo_prob1'] != None:
@@ -75,5 +71,4 @@ class Forecast:
                 team1['elo'] += shift
                 team2['elo'] -= shift
 
-        return games
         return games
