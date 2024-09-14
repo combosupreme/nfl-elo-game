@@ -143,6 +143,17 @@ class Util:
         return my_points_by_season, elo_points_by_season
 
     @staticmethod
+    def get_upcoming_games(games: list) -> dict:
+        matchups = Util.group_predictions_by_matchup(games)
+        upcoming_games = {}
+        game_dates = Util.this_nfl_week_dates()
+        for date in game_dates:
+            for matchup in matchups.keys():
+                if date in matchup:
+                    upcoming_games[matchup] = matchups[matchup]
+        return upcoming_games
+    
+    @staticmethod
     def show_this_weeks_games(games: list[dict], user_forecast_values: bool = False, condensed_version:bool = False, skip_print:bool = False) -> str:
         """ Prints forecasts for upcoming games and returns the same as a string """
         result_str = ""

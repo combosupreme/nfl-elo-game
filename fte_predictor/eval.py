@@ -13,11 +13,15 @@ def call_predictor(get_updates: bool, k_value: float, hfa_value: float, revert_v
 
     # Evaluate our forecasts against Elo
     my_points_by_season, elo_points_by_season = Util.evaluate_forecasts(forecasted_games)
+    
+    
+    upcoming_games = Util.get_upcoming_games(forecasted_games)
             
     return_dict = {
         "forecasted_games": forecasted_games,
         "my_points_by_season": my_points_by_season,
-        "elo_points_by_season": elo_points_by_season
+        "elo_points_by_season": elo_points_by_season,
+        "upcoming_games": upcoming_games,
         }
         
     return return_dict
